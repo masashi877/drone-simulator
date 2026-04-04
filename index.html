@@ -287,11 +287,8 @@
     return Math.max(min, Math.min(max, value));
   }
 
-  function getMissionScale() {
-    if (canvas.width <= 520) {
-      return 0.88;
-    }
-    return 1;
+  function isMobileCanvas() {
+    return canvas.width <= 520;
   }
 
   function Drone(x, y) {
@@ -421,7 +418,7 @@
   Drone.prototype.startPolygonMission = function(sides, length) {
     if (sides < 3 || this.battery <= 0) return;
 
-    if (canvas.width <= 520) {
+    if (isMobileCanvas()) {
       this.x = canvas.width / 2;
       this.y = canvas.height / 2;
     }
@@ -444,13 +441,19 @@
   };
 
   Drone.prototype.startTriangleMission = function() {
-    var scale = getMissionScale();
-    this.startPolygonMission(3, Math.round(130 * scale));
+    if (isMobileCanvas()) {
+      this.startPolygonMission(3, 42);
+    } else {
+      this.startPolygonMission(3, 130);
+    }
   };
 
   Drone.prototype.startSquareMission = function() {
-    var scale = getMissionScale();
-    this.startPolygonMission(4, Math.round(100 * scale));
+    if (isMobileCanvas()) {
+      this.startPolygonMission(4, 38);
+    } else {
+      this.startPolygonMission(4, 100);
+    }
   };
 
   Drone.prototype.startCircleMission = function(radius, rounds) {
@@ -463,7 +466,7 @@
       this.takeoff();
     }
 
-    if (canvas.width <= 520) {
+    if (isMobileCanvas()) {
       this.x = canvas.width / 2;
       this.y = canvas.height / 2;
     }
@@ -808,30 +811,32 @@
   bind("droneScSquareBtn", function(){ drone.startSquareMission(); });
 
   bind("droneScCircleBtn", function(){
-    var scale = getMissionScale();
-    drone.startCircleMission(Math.round(80 * scale), 1);
+    if (isMobileCanvas()) {
+      drone.startCircleMission(30, 1);
+    } else {
+      drone.startCircleMission(80, 1);
+    }
   });
 
   bind("droneScPolygonBtn", function(){
-  var sides = parseInt(sidesInput.value, 10);
-  var length = parseInt(lengthInput.value, 10);
+    var sides = parseInt(sidesInput.value, 10);
+    var length = parseInt(lengthInput.value, 10);
 
-  if (isNaN(sides)) sides = 5;
-  if (isNaN(length)) length = 90;
+    if (isNaN(sides)) sides = 5;
+    if (isNaN(length)) length = 90;
 
-  sides = clamp(sides, 3, 12);
-  length = clamp(length, 30, 200);
+    sides = clamp(sides, 3, 12);
+    length = clamp(length, 30, 200);
 
-  sidesInput.value = sides;
-  lengthInput.value = length;
+    sidesInput.value = sides;
+    lengthInput.value = length;
 
-  var scale = getMissionScale();
-
-  // ⭐ 多角形だけ少し大きめに補正
-  var adjustedLength = Math.round(length * scale * 1.8);
-
-  drone.startPolygonMission(sides, adjustedLength);
-});
+    if (isMobileCanvas()) {
+      drone.startPolygonMission(sides, Math.max(26, Math.round(length * 0.45)));
+    } else {
+      drone.startPolygonMission(sides, length);
+    }
+  });
 
   bind("droneScSetYawBtn", function(){
     var deg = parseInt(yawInput.value, 10);
