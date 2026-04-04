@@ -813,21 +813,25 @@
   });
 
   bind("droneScPolygonBtn", function(){
-    var sides = parseInt(sidesInput.value, 10);
-    var length = parseInt(lengthInput.value, 10);
+  var sides = parseInt(sidesInput.value, 10);
+  var length = parseInt(lengthInput.value, 10);
 
-    if (isNaN(sides)) sides = 5;
-    if (isNaN(length)) length = 90;
+  if (isNaN(sides)) sides = 5;
+  if (isNaN(length)) length = 90;
 
-    sides = clamp(sides, 3, 12);
-    length = clamp(length, 30, 200);
+  sides = clamp(sides, 3, 12);
+  length = clamp(length, 30, 200);
 
-    sidesInput.value = sides;
-    lengthInput.value = length;
+  sidesInput.value = sides;
+  lengthInput.value = length;
 
-    var scale = getMissionScale();
-    drone.startPolygonMission(sides, Math.round(length * scale));
-  });
+  var scale = getMissionScale();
+
+  // ⭐ 多角形だけ少し大きめに補正
+  var adjustedLength = Math.round(length * scale * 1.8);
+
+  drone.startPolygonMission(sides, adjustedLength);
+});
 
   bind("droneScSetYawBtn", function(){
     var deg = parseInt(yawInput.value, 10);
