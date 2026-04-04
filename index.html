@@ -316,28 +316,6 @@
     this.modeText = "停止中";
   }
 
-  function resizeCanvas() {
-    var w;
-
-    if (window.innerWidth <= 768) {
-      w = Math.min(window.innerWidth * 0.8, 520);
-    } else {
-      w = 760;
-    }
-
-    var h = Math.round(w * 0.684);
-
-    canvas.width = w;
-    canvas.height = h;
-
-    if (drone) {
-      drone.startX = clamp(drone.startX, 30, canvas.width - 30);
-      drone.startY = clamp(drone.startY, 70, canvas.height - 30);
-      drone.x = clamp(drone.x, 30, canvas.width - 30);
-      drone.y = clamp(drone.y, 70, canvas.height - 30);
-    }
-  }
-
   Drone.prototype.takeoff = function() {
     if (!this.flying && this.battery > 0) {
       this.flying = true;
@@ -361,7 +339,7 @@
 
   Drone.prototype.resetToCenter = function() {
     this.startX = canvas.width / 2;
-    this.startY = canvas.height / 2 + 40;
+    this.startY = canvas.height / 2 + 20;
     this.x = this.startX;
     this.y = this.startY;
     this.altitude = 0;
@@ -660,7 +638,7 @@
     ctx.save();
     ctx.fillStyle = "rgba(120,120,120,0.4)";
     ctx.beginPath();
-    ctx.arc(this.x, this.y, 20, 0, Math.PI * 2);
+    ctx.arc(this.x, this.y, 16, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
   };
@@ -674,28 +652,28 @@
     ctx.strokeStyle = "#222";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(rx, ry, 10, 0, Math.PI * 2);
+    ctx.arc(rx, ry, 8, 0, Math.PI * 2);
     ctx.stroke();
 
     ctx.fillStyle = color;
     ctx.beginPath();
-    ctx.arc(rx, ry, 6, 0, Math.PI * 2);
+    ctx.arc(rx, ry, 5, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.strokeStyle = "#222";
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 3;
   };
 
   Drone.prototype.drawDrone = function() {
     var bodyY = this.y - this.altitude;
-    var arm = 26;
+    var arm = (canvas.width <= 520) ? 18 : 26;
 
     ctx.save();
     ctx.translate(this.x, bodyY);
     ctx.rotate(this.angle * Math.PI / 180);
 
     ctx.strokeStyle = "#222";
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 3;
 
     this.drawArmRotor( arm,  arm, "#ff6666");
     this.drawArmRotor(-arm,  arm, "#66cc88");
@@ -704,14 +682,14 @@
 
     ctx.fillStyle = "#4e8ef7";
     ctx.beginPath();
-    ctx.arc(0, 0, 15, 0, Math.PI * 2);
+    ctx.arc(0, 0, 12, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.strokeStyle = "#ff3333";
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.moveTo(0, 0);
-    ctx.lineTo(20, 0);
+    ctx.lineTo(16, 0);
     ctx.stroke();
 
     ctx.restore();
@@ -750,7 +728,27 @@
     ctx.restore();
   };
 
-  var drone = new Drone(canvas.width / 2, canvas.height / 2 + 40);
+  var drone = new Drone(250, 170);
+
+  function resizeCanvas() {
+    var w;
+
+    if (window.innerWidth <= 768) {
+      w = Math.min(window.innerWidth * 0.8, 520);
+    } else {
+      w = 760;
+    }
+
+    var h = Math.round(w * 0.684);
+
+    canvas.width = w;
+    canvas.height = h;
+
+    drone.startX = clamp(drone.startX, 30, canvas.width - 30);
+    drone.startY = clamp(drone.startY, 70, canvas.height - 30);
+    drone.x = clamp(drone.x, 30, canvas.width - 30);
+    drone.y = clamp(drone.y, 70, canvas.height - 30);
+  }
 
   function updateStatus() {
     var yaw = ((drone.angle % 360) + 360) % 360;
@@ -840,9 +838,18 @@
   canvas.addEventListener("click", handleSetStart);
   canvas.addEventListener("touchstart", handleSetStart, { passive:false });
 
-  window.addEventListener("resize", resizeCanvas);
   resizeCanvas();
   drone.resetToCenter();
+  drone.draw();
+  updateStatus();
+
+  window.addEventListener("resize", function() {
+    resizeCanvas();
+    drone.resetToCenter();
+    drone.draw();
+    updateStatus();
+  });
+
   loop();
 })();
 </script>
