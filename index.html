@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>授業向け ドローンシミュレーター</title>
 <style>
 .drone-sc-wrap{
   width:100% !important;
@@ -44,8 +50,8 @@
 
 .drone-sc-canvas{
   display:block !important;
-  width:100% !important;
-  max-width:100% !important;
+  width:90% !important;
+  max-width:760px !important;
   height:auto !important;
   margin:0 auto 16px auto !important;
   background:#fff !important;
@@ -153,11 +159,11 @@
 
 @media (max-width:768px){
   .drone-sc-app{
-    padding:12px !important;
+    padding:10px !important;
   }
 
   .drone-sc-canvas{
-    width:95% !important;
+    width:88% !important;
   }
 
   .drone-sc-panel{
@@ -184,6 +190,8 @@
   }
 }
 </style>
+</head>
+<body>
 
 <div class="drone-sc-wrap">
   <div class="drone-sc-app">
@@ -278,29 +286,6 @@
   function clamp(value, min, max){
     return Math.max(min, Math.min(max, value));
   }
-　function resizeCanvas() {
-    var w;
-
-    if (window.innerWidth <= 768) {
-      w = window.innerWidth * 0.8;
-    } else {
-      w = 760;
-    }
-
-    var h = Math.round(w * 0.684);
-
-    canvas.width = w;
-    canvas.height = h;
-
-    if (drone) {
-      drone.startX = clamp(drone.startX, 30, canvas.width - 30);
-      drone.startY = clamp(drone.startY, 70, canvas.height - 30);
-      drone.x = clamp(drone.x, 30, canvas.width - 30);
-      drone.y = clamp(drone.y, 70, canvas.height - 30);
-  }
-}{
-}
-  }
 
   function Drone(x, y) {
     this.startX = x;
@@ -329,6 +314,28 @@
 
     this.battery = 100;
     this.modeText = "停止中";
+  }
+
+  function resizeCanvas() {
+    var w;
+
+    if (window.innerWidth <= 768) {
+      w = Math.min(window.innerWidth * 0.8, 520);
+    } else {
+      w = 760;
+    }
+
+    var h = Math.round(w * 0.684);
+
+    canvas.width = w;
+    canvas.height = h;
+
+    if (drone) {
+      drone.startX = clamp(drone.startX, 30, canvas.width - 30);
+      drone.startY = clamp(drone.startY, 70, canvas.height - 30);
+      drone.x = clamp(drone.x, 30, canvas.width - 30);
+      drone.y = clamp(drone.y, 70, canvas.height - 30);
+    }
   }
 
   Drone.prototype.takeoff = function() {
@@ -839,3 +846,6 @@
   loop();
 })();
 </script>
+
+</body>
+</html>
