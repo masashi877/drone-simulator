@@ -416,29 +416,34 @@
   };
 
   Drone.prototype.startPolygonMission = function(sides, length) {
-    if (sides < 3 || this.battery <= 0) return;
+  if (sides < 3) return;
 
-    if (isMobileCanvas()) {
-      this.x = canvas.width / 2;
-      this.y = canvas.height / 2;
-    }
+  // 中心を固定（ここが超重要）
+  this.x = canvas.width / 2;
+  this.y = canvas.height / 2;
 
-    if (!this.flying) {
-      this.takeoff();
-    }
+  this.autoMode = false;
+  this.circleMode = false;
+  this.path = [];
 
-    this.autoMode = true;
-    this.circleMode = false;
-    this.autoCommands = [];
-    this.currentCommand = null;
-    this.modeText = sides + "角形飛行";
+  this.modeText = sides + "角形飛行";
 
-    var turnAngle = 360 / sides;
-    for (var i = 0; i < sides; i++) {
-      this.autoCommands.push({ type: "move", value: length });
-      this.autoCommands.push({ type: "rotate", value: turnAngle });
-    }
-  };
+  // 半径計算（崩れ防止）
+  var radius = length;
+
+  var angleStep = (Math.PI * 2) / sides;
+
+  this.path = [];
+
+  for (var i = 0; i <= sides; i++) {
+    var angle = i * angleStep - Math.PI / 2;
+
+    var px = this.x + Math.cos(angle) * radius;
+    var py = this.y + Math.sin(angle) * radius;
+
+    this.path.push({ x: px, y: py });
+  }
+};
 
   Drone.prototype.startTriangleMission = function() {
     if (isMobileCanvas()) {
