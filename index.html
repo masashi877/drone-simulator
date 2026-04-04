@@ -200,7 +200,7 @@
       タップで始点変更・yaw角度指定・三角/四角/円/多角形飛行に対応
     </div>
 
-    <canvas id="droneScCanvas" class="drone-sc-canvas" width="500" height="340"></canvas>
+    <canvas id="droneScCanvas" class="drone-sc-canvas" width="500" height="420"></canvas>
 
     <div class="drone-sc-panel">
       <div class="drone-sc-card drone-sc-full">
@@ -289,7 +289,7 @@
 
   function getMissionScale() {
     if (canvas.width <= 520) {
-      return 0.35;
+      return 0.22;
     }
     return 1;
   }
@@ -346,7 +346,7 @@
 
   Drone.prototype.resetToCenter = function() {
     this.startX = canvas.width / 2;
-    this.startY = canvas.height / 2 - 20;
+    this.startY = canvas.height / 2;
     this.x = this.startX;
     this.y = this.startY;
     this.altitude = 0;
@@ -423,7 +423,7 @@
 
     if (canvas.width <= 520) {
       this.x = canvas.width / 2;
-      this.y = canvas.height / 2 - 20;
+      this.y = canvas.height / 2;
     }
 
     if (!this.flying) {
@@ -465,7 +465,7 @@
 
     if (canvas.width <= 520) {
       this.x = canvas.width / 2;
-      this.y = canvas.height / 2 - 20;
+      this.y = canvas.height / 2;
     }
 
     this.autoMode = false;
@@ -477,7 +477,7 @@
     this.circleRadius = radius;
     this.circleRounds = rounds;
     this.circleCenterX = this.x;
-    this.circleCenterY = this.y + radius * 0.45;
+    this.circleCenterY = this.y;
     this.circleAngle = -90;
     this.circleDoneAngle = 0;
   };
@@ -580,7 +580,7 @@
 
   Drone.prototype.keepInBounds = function() {
     this.x = clamp(this.x, 30, canvas.width - 30);
-    this.y = clamp(this.y, 70, canvas.height - 30);
+    this.y = clamp(this.y, 50, canvas.height - 50);
   };
 
   Drone.prototype.draw = function() {
@@ -750,23 +750,23 @@
   var drone = new Drone(250, 170);
 
   function resizeCanvas() {
-    var w;
+    var w, h;
 
     if (window.innerWidth <= 768) {
-      w = Math.min(window.innerWidth * 0.8, 520);
+      w = Math.min(window.innerWidth * 0.82, 520);
+      h = Math.round(w * 0.95);
     } else {
       w = 760;
+      h = Math.round(w * 0.684);
     }
-
-    var h = Math.round(w * 0.684);
 
     canvas.width = w;
     canvas.height = h;
 
     drone.startX = clamp(drone.startX, 30, canvas.width - 30);
-    drone.startY = clamp(drone.startY, 70, canvas.height - 30);
+    drone.startY = clamp(drone.startY, 50, canvas.height - 50);
     drone.x = clamp(drone.x, 30, canvas.width - 30);
-    drone.y = clamp(drone.y, 70, canvas.height - 30);
+    drone.y = clamp(drone.y, 50, canvas.height - 50);
   }
 
   function updateStatus() {
